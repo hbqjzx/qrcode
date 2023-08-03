@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->    
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}">
+    <title>知数云艺术二维码 API</title>
+    <style>
+      #qrImage {
+          max-width: 100%;
+          width: 30%;
+          height: auto; 
+          margin-bottom:50px;         
+      }
+      /* 当屏幕宽度小于或等于600px时 */
+      @media screen and (max-width: 600px) {
+        #qrImage {
+          width: 100%; 
+          padding:10px;
+          /*  在小屏幕上设置宽度为100% */
+        } 
+      }   
+  </style>  
+  </head>
+  <body>
+    
+{% extends "bootstrap/base.html" %}
+{% block title %}My Project{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">My Art QRcode</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <form id="myForm">
+      <div class="mb-3">
+          <label for="token-input" class="form-label" title="请求所需的密钥">请输入token:
+            <a href="https://auth.zhishuyun.com/auth/login?inviter_id=b01a5684-a3e4-43d6-a7c1-61105ccf9a8c&redirect=https://data.zhishuyun.com/services/38ecf158-36f2-42f2-8e7f-6786cdfc2452" target="_blank" style="text-decoration: none;">「 去申请 」</a>
+          </label>
+          <input type="text" class="form-control" id="token-input" placeholder="你的知数云艺术二维码 API token" required>
+      </div>
+    
+     <!-- <div class="mb-3">
+        <label for="accept-string-select" class="form-label">请选择Accept string:</label>
+        <select class="form-select" id="accept-string-select">
+            <option value="application/json" selected>application/json</option>
+           
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="content-type-string-select" class="form-label">请选择Content-Type string:</label>
+        <select class="form-select" id="content-type-string-select">
+            <option value="application/json" selected>application/json</option>
+           
+        </select>
+    </div> -->
+      
+      <div class="mb-3">
+          <label for="option-select" class="form-label">请选择二维码类型:</label>
+          <select class="form-select" id="option-select">
+              <option value="link">网址</option>
+              <option value="text">文本</option>
+              <option value="email">电子邮件</option>
+              <option value="phone">电话号码</option>
+              <option value="sms">短信息</option>
+          </select>
+      </div>
+      <div class="mb-3">
+          <label for="qr-content-input" class="form-label">请输入二维码内容:</label>
+          <input type="text" class="form-control" id="qr-content-input" placeholder="二维码内容。如链接内容、文本内容等" required>
+      </div>
+      <div class="mb-3">
+        <label for="draw-instruction-input" class="form-label" title="绘制指令如：mexican tacos，具体写法可以参考 SD 官网（https://stablediffusionweb.com）">请输入绘制指令: 
+          <a href="#" onclick="alert('指令如：mexican tacos ......'); return false;" style="text-decoration: none;">「 查看 」</a>
+        </label>
+        
+          <input type="text" class="form-control" id="draw-instruction-input" placeholder="绘制指令。生成艺术二维码的背景风格，强烈建议用英文" required>
+      </div>
+      <div class="mb-3">
+          <label for="preset-qr-select" class="form-label" title="预设二维码风格组合，如定位框的样式（方形、圆形等）、点的样式（方形、圆形等）">请选择预设二维码组合:</label>
+          <select class="form-select" id="preset-qr-select">
+              <option value="custom">custom</option>  
+              <option value="s1">s1</option>
+              <option value="s2">s2</option>
+              <option value="s3">s3</option>
+              <option value="rd1">rd1</option>
+              <option value="rd2">rd2</option>
+              <option value="rd3">rd3</option>
+              <option value="d1">d1</option>
+              <option value="d2">d2</option>
+              <option value="d3">d3</option>
+              <option value="r1">r1</option>
+              <option value="r2">r2</option>
+              <option value="r3">r3</option>
+              <option value="c1">c1</option>
+              <option value="c2">c2</option>
+              <option value="c3">c3</option>
+              <option value="sq1">sq1</option>
+              <option value="sq2">sq2</option>
+              <option value="sq3">sq3</option>
+          </select>
+      </div>
+      <!--....其他字段也按照这个模式添加进去..... -->
+      <div class="mb-3">
+        <label for="preset-bg-select" class="form-label" title="预设背景风格。二维码背景的风格，如超现实风格、霓虹效果、手绘风格等">请选择预设背景风格:</label>
+        <select class="form-select" id="preset-bg-select">
+            <option value="none">none</option>
+            <option value="ultra-realism">ultra-realism</option>
+            <option value="epic-realms">epic-realms</option>
+            <option value="intricate-studio">intricate-studio</option>
+            <option value="symmetric-masterpiece">symmetric-masterpiece</option>
+            <option value="luminous-highway">luminous-highway</option>
+            <option value="celestial-journey">celestial-journey</option>
+            <option value="neon-mech">neon-mech</option>
+            <option value="ethereal-low-poly">ethereal-low-poly</option>
+            <option value="golden-vista">golden-vista</option>
+            <option value="cinematic-warm">cinematic-warm</option>
+            <option value="desolate-wildemess">desolate-wildemess</option>
+            <option value="vibrant-palette">vibrant-palette</option>
+            <option value="enigmatic-journey">enigmatic-journey</option>
+            <option value="timeless-cinematic">timeless-cinematic</option>
+            <option value="regal-galaxy">regal-galaxy</option>
+            <option value="illustriour-canvas">illustriour-canvas</option>
+            <option value="expressive-mural">expressive-mural</option>
+            <option value="serene-haze">serene-haze</option>
+            <option value="monochrome-3d">monochrome-3d</option>
+            <option value="intricate-details">intricate-details</option>
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="iteration-input" class="form-label" title="绘制迭代次数。当次数越大，绘制的二维码艺术风格越强，范围为 10-20，默认是 16">请输入绘制迭代次数:</label>
+        <input type="number" class="form-control" id="iteration-input" value="16">
+    </div>
+    
+    <div class="mb-3">
+        <label for="qr-weight-input" class="form-label" title="二维码的权重。当权重越大，图片越接近真实二维码，但是艺术化的风格会减弱，取值范围是 0.1-3，默认是 1.5">请输入二维码的权重:</label>
+        <input type="number" class="form-control" id="qr-weight-input" value="1.5">
+    </div>
+    
+    <div class="mb-3">
+        <label for="random-seed-input" class="form-label" title="随机种子。用于生成随机二维码，当种子相同时，生成的二维码风格是一样的，范围为 1-9007199254740991">请输入随机种子:</label>
+        <input type="number" class="form-control" id="random-seed-input" value="99899">
+    </div>
+    
+    <div class="mb-3">
+        <label for="preserve-link-select" class="form-label" title="是否保持原始链接。默认情况下会将输入链接缩短为短链接，可以提高扫码率，该值默认为 false">请选择是否保持原始链接:</label>
+        <select class="form-select" id="preserve-link-select">
+            <option value="true">true</option>
+            <option value="false" selected>false</option>
+        </select>
+    </div>
+    <div class="text-center mb-4">
+
+      <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+    </div>
+
+  </form>
+
+
+
+<!-- Place to show message and the img -->
+
+
+<div class="d-flex justify-content-center">
+  <p id='message'></p>  
+  <p id="loading" style="display: none;">二维码生成中，请稍后……</p>
+
+  <img id="qrImage" src="" style="display:none;">
+</div>
+
+<div class="fixed-bottom text-center bg-light py-3">
+    <a href="https://auth.zhishuyun.com/auth/login?inviter_id=b01a5684-a3e4-43d6-a7c1-61105ccf9a8c&redirect=https://data.zhishuyun.com">知数云智慧云平台</a>
+  </div>
+
+</div>   
+<!-- 外层div -->
+{% endblock %}
+<!-- JavaScript & Popper.js -->
+
+<script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
+
+
+</body>
+</html>
+
+{% block scripts %}
+{{ super() }}
+<script>
+//  <!-- 这里可以填写Javascript代码 -->
+ function validateInput(input) {
+        // 做一些基本的输入验证。例如：        
+         if (input['token'] == "") {
+            // return "Token 不可以为空！";
+         }
+        // 根据你的实际情况来扩充这个部分。
+         return true;
+     }
+
+    document.getElementById('myForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        var input = {
+            'token': document.getElementById('token-input').value,
+            "type": document.getElementById('option-select').value,   //link
+            "content": document.getElementById('qr-content-input').value,//内容 "https://data.zhishuyun.com",
+            "prompt": document.getElementById('draw-instruction-input').value,//prompt 指令"mexican tacos",
+            "pattern": document.getElementById('preset-qr-select').value,
+            "preset": document.getElementById('preset-bg-select').value,
+            "steps": document.getElementById('iteration-input').value,
+            "qrw": document.getElementById('qr-weight-input').value,
+            "seed": document.getElementById('random-seed-input').value,
+            "rawurl": document.getElementById('preserve-link-select').value
+            
+            // 其他所有的字段都应该按照这种方式来获取
+            //...
+            
+        };
+        
+        var validationResult = validateInput(input);
+        if (validationResult !== true) {
+            document.getElementById('message').innerText = validationResult;
+            return false;
+        }
+
+        //window.onload = function(){
+          //document.getElementById('submitBtn').addEventListener('click', function(e){
+           // e.preventDefault(); // 阻止按钮默认的提交表单行为
+          //alert('ok');
+          // 设置加载提示为显示状态，并且禁用提交按钮
+    document.getElementById('loading').style.display = 'block';
+    var submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(input)  // 注意，请用你实际的数据替换这个 input 对象
+            })
+            .then(response => response.json())
+            .then(data => {
+                //console.log(data)
+                // 在收到响应后，隐藏加载提示并启用提交按钮
+        document.getElementById('loading').style.display = 'none';
+        submitBtn.disabled = false;
+                var messageDiv = document.getElementById('message'); 
+                var qrImageDiv = document.getElementById('qrImage');
+                try { 
+                    if(data.success !== true) {
+                        console.log('yes');
+                        messageDiv.innerText = 'Error while generating QR Code, please try again later.';
+                        qrImageDiv.style.display = "none";
+                    } else {
+                        qrImageDiv.src = data['image_url'];
+                        console.log(qrImageDiv.src);
+                        //console.log('yes');
+                        qrImageDiv.onload = function() {
+                            qrImageDiv.style.display = "block";
+                            messageDiv.innerText = '';      
+                        }  
+                    }
+                } catch (error) { 
+                    console.error("An error happened in the success block: ", error);
+                }
+            })
+            .catch(error => {
+              // 如有网络错误也要隐藏加载提示并启用提交按钮
+        document.getElementById('loading').style.display = 'none';
+        submitBtn.disabled = false;
+                console.error("A network error occurred: ", error);
+            });
+        //});
+
+    })
+    
+</script> 
+{% endblock %}
