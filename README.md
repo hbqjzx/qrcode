@@ -8,7 +8,7 @@
 
     Python3.7+ 
     ```bash
-    git clone github.com/hbqzx/qrcode
+    git clone https://github.com/hbqjzx/qrcode.git
     ```
     ## cd qrcode
     
